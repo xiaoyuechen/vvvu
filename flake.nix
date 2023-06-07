@@ -23,8 +23,6 @@
           acceptTerms = true;
           defaults.email = "xchen@vvvu.org";
         };
-
-        services.automatic-timezoned.enable = true;
       };
 
       mail = { config, pkgs, ... }: {
