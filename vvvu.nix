@@ -23,6 +23,7 @@
   mail = { config, pkgs, ... }: {
     deployment.targetHost = "mail.vvvu.org";
     deployment.keys.xchen.text = keys.mail.xchen;
+    deployment.keys.jli.text = keys.mail.jli;
 
     imports = [ nixos-mailserver.nixosModules.default ];
 
@@ -34,6 +35,9 @@
       loginAccounts = {
         "xchen@vvvu.org" = {
           hashedPasswordFile = "/run/keys/xchen";
+        };
+        "jli@vvvu.org" = {
+          hashedPasswordFile = "/run/keys/jli";
         };
       };
 
