@@ -88,6 +88,7 @@
       package = pkgs.nextcloud29;
       hostName = "nextcloud.vvvu.org";
       config.adminpassFile = "/run/keys/admin";
+      https = true;
     };
 
     services.nginx.virtualHosts.${config.services.nextcloud.hostName} = {
