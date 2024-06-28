@@ -12,7 +12,7 @@
 
       packages.x86_64-linux.digital-ocean-image =
         (pkgs.nixos {
-          imports = [ (pkgs + "/nixos/modules/virtualisation/digital-ocean-image.nix") ];
+          imports = [ (nixpkgs + "/nixos/modules/virtualisation/digital-ocean-image.nix") ];
         }).digitalOceanImage;
 
       packages.x86_64-linux.default = self.packages.x86_64-linux.digital-ocean-image;
