@@ -22,8 +22,7 @@
       };
 
       nixopsConfigurations.default = import ./vvvu.nix {
-        inherit nixpkgs;
-        nixos-mailserver = nixos-mailserver;
+        inherit nixpkgs nixos-mailserver;
         keys = import ./keys.nix;
       };
     };
