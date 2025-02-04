@@ -80,20 +80,102 @@
       user = "nextcloud";
       group = "nextcloud";
     };
-
     users.groups.keys.members = [ "nextcloud" ];
 
     services.nextcloud = {
       enable = true;
-      package = pkgs.nextcloud29;
+      package = pkgs.nextcloud30;
       hostName = "nextcloud.vvvu.org";
-      config.adminpassFile = "/run/keys/admin";
+      database.createLocally = true;
+      config = {
+        adminpassFile = "/run/keys/admin";
+        dbtype = "mysql";
+      };
       https = true;
+      notify_push.enable = true;
     };
 
     services.nginx.virtualHosts.${config.services.nextcloud.hostName} = {
       forceSSL = true;
       enableACME = true;
+    };
+
+    networking.firewall.allowedTCPPorts = [ 80 443 ];
+  };
+
+  ntfy = { config, pkgs, ... }: {
+    nixpkgs.overlays = [
+      (final: prev: {
+        mollysocket = prev.mollysocket.overrideAttrs (old: rec {
+          version = "1.6.0";
+          name = "mollysocket-${version}";
+          src = prev.fetchFromGitHub {
+            owner = "mollyim";
+            repo = "mollysocket";
+            rev = "${version}";
+            hash = "sha256-F80XRQn3h1Y6dE8PVLGMTY29yZomrwqFAsm7h8euHw8=";
+          };
+          cargoDeps = old.cargoDeps.overrideAttrs (prev.lib.const {
+            name = "${name}-vendor.tar.gz";
+            inherit src;
+            outputHash = "sha256-ZHS/EJBhT1H5MvuqdPtmf95ctuLft4qVsZzPVeJBR5k=";
+          });
+        });
+      })
+    ];
+
+    deployment.targetHost = "ntfy.vvvu.org";
+
+    deployment.keys.mollysocket = {
+      text = keys.mollysocket;
+      user = "mollysocket";
+      group = "mollysocket";
+    };
+
+    services.mollysocket = {
+      enable = true;
+      environmentFile = "/run/keys/mollysocket";
+    };
+
+    services.ntfy-sh = {
+      enable = true;
+      settings = {
+        base-url = "http://ntfy.vvvu.org";
+        behind-proxy = true;
+      };
+    };
+
+    services.nginx = {
+      enable = true;
+      recommendedProxySettings = true;
+      recommendedTlsSettings = true;
+      validateConfigFile = false;
+      virtualHosts."ntfy.vvvu.org" = {
+        forceSSL = true;
+        enableACME = true;
+        locations."/" = {
+          proxyPass = "http://${config.services.ntfy-sh.settings.listen-http}";
+          proxyWebsockets = true;
+          extraConfig = ''
+            proxy_buffering off;
+            proxy_request_buffering off;
+            proxy_redirect off;
+
+            proxy_connect_timeout 3m;
+            proxy_send_timeout 3m;
+            proxy_read_timeout 3m;
+
+            client_max_body_size 0;
+          '';
+        };
+        locations."/molly/" = {
+          proxyPass = with config.services.mollysocket.settings; "http://${host}:${toString port}/";
+          extraConfig = ''
+            proxy_set_header Host $host;
+            proxy_set_header X-Original-URL $uri;
+          '';
+        };
+      };
     };
 
     networking.firewall.allowedTCPPorts = [ 80 443 ];

@@ -6,7 +6,9 @@
   };
 
   outputs = { self, nixpkgs, nixos-mailserver }:
-    let pkgs = import nixpkgs { system = "x86_64-linux"; }; in
+    let
+      pkgs = import nixpkgs { system = "x86_64-linux"; };
+    in
     {
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt;
 
