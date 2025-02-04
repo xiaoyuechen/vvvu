@@ -104,28 +104,7 @@
   };
 
   ntfy = { config, pkgs, ... }: {
-    nixpkgs.overlays = [
-      (final: prev: {
-        mollysocket = prev.mollysocket.overrideAttrs (old: rec {
-          version = "1.6.0";
-          name = "mollysocket-${version}";
-          src = prev.fetchFromGitHub {
-            owner = "mollyim";
-            repo = "mollysocket";
-            rev = "${version}";
-            hash = "sha256-F80XRQn3h1Y6dE8PVLGMTY29yZomrwqFAsm7h8euHw8=";
-          };
-          cargoDeps = old.cargoDeps.overrideAttrs (prev.lib.const {
-            name = "${name}-vendor.tar.gz";
-            inherit src;
-            outputHash = "sha256-ZHS/EJBhT1H5MvuqdPtmf95ctuLft4qVsZzPVeJBR5k=";
-          });
-        });
-      })
-    ];
-
     deployment.targetHost = "ntfy.vvvu.org";
-
     deployment.keys.mollysocket = {
       text = keys.mollysocket;
       user = "mollysocket";
@@ -135,6 +114,10 @@
     services.mollysocket = {
       enable = true;
       environmentFile = "/run/keys/mollysocket";
+      settings = {
+        allowed_uuids = ["5a6862ec-7c60-457f-b178-f2ccd82ea99c"];
+        allowed_endpoints = ["https://ntfy.vvvu.org/upRXSufuKOSEAv"];
+      };
     };
 
     services.ntfy-sh = {
