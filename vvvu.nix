@@ -24,6 +24,8 @@
     deployment.targetHost = "mail.vvvu.org";
     deployment.keys.xchen.text = keys.mail.xchen;
     deployment.keys.jli.text = keys.mail.jli;
+    deployment.keys.uppsala.text = keys.mail.uppsala;
+    deployment.keys.gavle.text = keys.mail.gavle;
 
     imports = [ nixos-mailserver.nixosModules.default ];
 
@@ -38,6 +40,12 @@
         };
         "jli@vvvu.org" = {
           hashedPasswordFile = "/run/keys/jli";
+        };
+        "uppsala@vvvu.org" = {
+          hashedPasswordFile = "/run/keys/uppsala";
+        };
+        "gavle@vvvu.org" = {
+          hashedPasswordFile = "/run/keys/gavle";
         };
       };
 
