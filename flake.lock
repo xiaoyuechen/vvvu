@@ -40,11 +40,11 @@
         "nixpkgs-24_11": "nixpkgs-24_11"
       },
       "locked": {
-        "lastModified": 1742413977,
-        "narHash": "sha256-NkhM9GVu3HL+MiXtGD0TjuPCQ4GFVJPBZ8KyI2cFDGU=",
+        "lastModified": 1745416927,
+        "narHash": "sha256-jg725STLRgsIAgrvjbRJQEP0F0w+rmvDJ64EN65p6EI=",
         "owner": "simple-nixos-mailserver",
         "repo": "nixos-mailserver",
-        "rev": "b4fbffe79c00f19be94b86b4144ff67541613659",
+        "rev": "ab52efd622a9f7dca269a49edbbea6b6b7294f57",
         "type": "gitlab"
       },
       "original": {
@@ -85,10 +85,12 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 0,
-        "narHash": "sha256-hw63HnwnqU3ZQfsMclLhMvOezpM7RSB0dMAtD5/sOiw=",
-        "path": "/nix/store/4m21g6b3bq78vn5skaxjmqwg7fnir87j-source",
-        "type": "path"
+        "lastModified": 1745377448,
+        "narHash": "sha256-jhZDfXVKdD7TSEGgzFJQvEEZ2K65UMiqW5YJ2aIqxMA=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "507b63021ada5fee621b6ca371c4fca9ca46f52c",
+        "type": "github"
       },
       "original": {
         "id": "nixpkgs",
