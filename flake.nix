@@ -20,7 +20,10 @@
       packages.x86_64-linux.default = self.packages.x86_64-linux.digital-ocean-image;
 
       devShells.x86_64-linux.default = with pkgs; mkShell {
-        packages = [ nixops_unstable_minimal ];
+        packages = [ nixops_unstable_full ];
+        shellHook = ''
+          export NIXOPS_STATE=${self.nixopsConfigurations.default.network.storage.legacy.databasefile};
+        '';
       };
 
       nixopsConfigurations.default = import ./vvvu.nix {

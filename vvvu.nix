@@ -1,33 +1,35 @@
-{ nixpkgs
-, nixos-mailserver
-, keys
-}:
+{ nixpkgs, nixos-mailserver, keys }:
 
 {
   inherit nixpkgs;
 
   network = {
     description = "vvvu.org";
-    storage.legacy.databasefile = { };
+    storage.legacy.databasefile = "./.nixops/deployments.nixops";
   };
 
   defaults = {
-    imports = [ (nixpkgs + "/nixos/modules/virtualisation/digital-ocean-image.nix") ];
+    imports = [
+      (nixpkgs + "/nixos/modules/virtualisation/digital-ocean-image.nix")
+      nixos-mailserver.nixosModules.default
+    ];
 
     security.acme = {
       acceptTerms = true;
       defaults.email = "xchen@vvvu.org";
     };
+
+    time.timeZone = "Europe/Stockholm";
+    nix.optimise.automatic = true;
   };
 
   mail = { config, pkgs, ... }: {
     deployment.targetHost = "mail.vvvu.org";
+    deployment.keys.sasl.text = keys.mail.sasl;
     deployment.keys.xchen.text = keys.mail.xchen;
     deployment.keys.jli.text = keys.mail.jli;
     deployment.keys.uppsala.text = keys.mail.uppsala;
     deployment.keys.gavle.text = keys.mail.gavle;
-
-    imports = [ nixos-mailserver.nixosModules.default ];
 
     mailserver = {
       enable = true;
@@ -50,6 +52,18 @@
       };
 
       certificateScheme = "acme-nginx";
+    };
+
+    services.postfix = {
+      enable = true;
+      relayHost = "email-smtp.eu-north-1.amazonaws.com";
+      relayPort = 587;
+      config = {
+        smtp_use_tls = "yes";
+        smtp_sasl_auth_enable = "yes";
+        smtp_sasl_security_options = "";
+        smtp_sasl_password_maps = "texthash:/run/keys/sasl";
+      };
     };
   };
 
@@ -83,24 +97,16 @@
 
   nextcloud = { config, pkgs, ... }: {
     deployment.targetHost = "nextcloud.vvvu.org";
-    deployment.keys.admin = {
-      text = keys.nextcloud;
-      user = "nextcloud";
-      group = "nextcloud";
-    };
-    users.groups.keys.members = [ "nextcloud" ];
-
+    deployment.keys.admin.text = keys.nextcloud;
     services.nextcloud = {
       enable = true;
-      package = pkgs.nextcloud30;
+      package = pkgs.nextcloud31;
       hostName = "nextcloud.vvvu.org";
-      database.createLocally = true;
       config = {
         adminpassFile = "/run/keys/admin";
-        dbtype = "mysql";
+        dbtype = "sqlite";
       };
       https = true;
-      notify_push.enable = true;
     };
 
     services.nginx.virtualHosts.${config.services.nextcloud.hostName} = {
