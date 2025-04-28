@@ -21,6 +21,7 @@
 
     time.timeZone = "Europe/Stockholm";
     nix.optimise.automatic = true;
+    system.stateVersion = "23.05";
   };
 
   mail = { config, pkgs, ... }: {
